@@ -1,0 +1,48 @@
+
+
+import json
+
+import  boto3
+import subprocess,sys
+
+subprocess.call('pip install pymysql -t  /tmp/ --no-cache-dir'.split(),stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)   #lambda chya tmp madhe pymysql install kare execution cya veli on the fly 
+sys.path.insert(1,'/tmp/')
+
+subprocess.call('pip install pandas -t  /tmp/ --no-cache-dir'.split(),stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)   #landa execution chya veles varchya varich pandas install karte temp madhe
+sys.path.insert(1,'/tmp/')
+
+bucket_name = 'rdstos3-lambda-demo1'
+
+filename = 'input/department_data.csv'
+
+s3 = boto3.client('s3')
+
+import pymysql
+import pandas as pd
+
+host = 'database-1.c7o0eosiyha1.ap-south-1.rds.amazonaws.com'  #RDS end point
+username = 'data123'
+password = 'swwe_ewew233'
+database = 'my_database'
+
+def lambda_handler(event,context):
+    
+    conn = pymysql.connect(host=host,user=username,password=password,database=database)
+    cursor = conn.cursor()
+    
+    
+    cursor.execute("select * from employees")
+    
+    result = cursor.fetchall()
+    print(result)
+    
+    df = pd.DataFrame(result,columns=['id','first_name','last_name','age','salary'])
+    print(df)
+    
+    df.to_csv('/tmp/temp.csv',index=False)     #lamda madhe /temp hi temperary memory aahe   # index=False keli ki indexing nigj=hun jate
+    s3.upload_file('/tmp/temp.csv', bucket_name, 'department_data.csv')         #s3 madhe department_data.csv file tayar karte ti downlod keli ki tyat mysql madhala deta yeto
+    #s3.put_object(Body=str(result),Bucket=bucket_name,key=filename)     #mysql madhala deta disto
+    
+    
+    return "Success"
+    
