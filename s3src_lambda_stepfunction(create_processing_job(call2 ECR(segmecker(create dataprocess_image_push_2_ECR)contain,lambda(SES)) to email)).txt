@@ -1,0 +1,13 @@
+step 1 
+csv object dump in sorce s3 bucket lamda triger 
+
+step2 
+in lambda call to stepfucntion  
+step 3 
+in step function (in segmeker data processing.ipynb (read data from sorce s3 and permform EDA operation on it ,cleaned data dump in s3 destination bucket and s3 source bucket data delete)
+            dockerfile ,executor.py(bulid emage and push on ECR),ECR container create and segmaker processing job run in in container with latest tag)
+      
+afte lambda triger to SES
+
+step 4 SES send email to pipeline owener
+
